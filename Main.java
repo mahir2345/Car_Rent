@@ -165,6 +165,10 @@ class CarRentalSystem {
         }
         return null;
     }
+
+    public List<Rental> getRentals() {
+        return rentals;
+    }
 }
 
 class CarRentalSystemGUI {
@@ -176,10 +180,10 @@ class CarRentalSystemGUI {
         JFrame frame = new JFrame("Fast Car Rental");
         ImageIcon imgi = new ImageIcon("logo.png");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 500);
+        frame.setSize(400, 400); // Increased size to accommodate new buttons
         frame.setLayout(new BorderLayout());
         frame.setIconImage(imgi.getImage());
-        frame.getContentPane().setBackground(new Color(35,25,112));
+        frame.getContentPane().setBackground(new Color(35, 25, 112));
 
         // Create a panel to hold the label
         JPanel labelPanel = new JPanel();
@@ -195,15 +199,18 @@ class CarRentalSystemGUI {
         frame.add(labelPanel, BorderLayout.NORTH); // Add label panel to the top (NORTH)
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 1));
+        panel.setLayout(new GridLayout(5, 1)); // Adjusted grid layout for more buttons
 
         JButton rentCarButton = new JButton("Rent a Car");
         JButton returnCarButton = new JButton("Return a Car");
-
+        JButton availableCarsButton = new JButton("Available Cars");
+        JButton rentedCarsButton = new JButton("Rented Cars");
+        JButton exitButton = new JButton("Exit");
 
         panel.add(rentCarButton);
         panel.add(returnCarButton);
-
+        panel.add(availableCarsButton);
+        panel.add(rentedCarsButton);
 
         frame.add(panel, BorderLayout.CENTER);
 
@@ -221,6 +228,26 @@ class CarRentalSystemGUI {
             }
         });
 
+        availableCarsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAvailableCars();
+            }
+        });
+
+        rentedCarsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showRentedCars();
+            }
+        });
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
 
         frame.setVisible(true);
     }
@@ -267,7 +294,40 @@ class CarRentalSystemGUI {
         String nid = JOptionPane.showInputDialog("Enter your NID:");
         rentalSystem.returnCar(nid);
     }
+
+    private void showAvailableCars() {
+        List<Car> availableCars = rentalSystem.getAvailableCars();
+        if (availableCars.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No cars available.");
+        } else {
+            StringBuilder carList = new StringBuilder("Available Cars:\n");
+            for (Car car : availableCars) {
+                carList.append(car.toString()).append("\n");
+            }
+            JOptionPane.showMessageDialog(null, carList.toString());
+        }
+    }
+
+    private void showRentedCars() {
+        List<Rental> rentals = rentalSystem.getRentals();
+        if (rentals.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No cars rented currently.");
+        } else {
+            StringBuilder rentalDetails = new StringBuilder("Rented Cars Details:\n");
+            for (Rental rental : rentals) {
+                Car car = rental.getCar();
+                Customer customer = rental.getCustomer();
+                rentalDetails.append("Car: ").append(car.getBrand()).append(" ").append(car.getModel())
+                        .append(", Customer: ").append(customer.getName()).append(", NID: ").append(customer.getNid())
+                        .append(", Days: ").append(rental.getDays())
+                        .append(", Total Price: $").append(car.calculatePrice(rental.getDays()))
+                        .append("\n");
+            }
+            JOptionPane.showMessageDialog(null, rentalDetails.toString());
+        }
+    }
 }
+
 
 
 public class Main {
