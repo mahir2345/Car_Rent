@@ -58,11 +58,13 @@ class Customer {
     private String customerId;
     private String name;
     private String nid;
+    private int number;
 
-    public Customer(String customerId, String name, String nid) {
+    public Customer(String customerId, String name, String nid, int number) {
         this.customerId = customerId;
         this.name = name;
         this.nid = nid;
+        this.number = number;
     }
 
     public String getCustomerId() {
@@ -75,6 +77,9 @@ class Customer {
 
     public String getNid() {
         return nid;
+    }
+    public int getNumber() {
+        return number;
     }
 }
 
@@ -205,7 +210,6 @@ class CarRentalSystemGUI {
         JButton returnCarButton = new JButton("Return a Car");
         JButton availableCarsButton = new JButton("Available Cars");
         JButton rentedCarsButton = new JButton("Rented Cars");
-        JButton exitButton = new JButton("Exit");
 
         panel.add(rentCarButton);
         panel.add(returnCarButton);
@@ -242,13 +246,6 @@ class CarRentalSystemGUI {
             }
         });
 
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-            }
-        });
-
         frame.setVisible(true);
     }
 
@@ -262,6 +259,8 @@ class CarRentalSystemGUI {
 
         String name = JOptionPane.showInputDialog("Enter your name:");
         String nid = JOptionPane.showInputDialog("Enter your NID:");
+        int number = Integer.parseInt(JOptionPane.showInputDialog("Enter your pone number:"));
+
 
         JComboBox<Car> carComboBox = new JComboBox<>(availableCars.toArray(new Car[0]));
         JTextField rentalDaysField = new JTextField();
@@ -282,7 +281,7 @@ class CarRentalSystemGUI {
             int confirm = JOptionPane.showConfirmDialog(null, "Total Price: $" + totalPrice + "\nConfirm rental?", "Confirm Rental", JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
-                Customer newCustomer = new Customer("CUS" + (rentalSystem.getAvailableCars().size() + 1), name, nid);
+                Customer newCustomer = new Customer("CUS" + (rentalSystem.getAvailableCars().size() + 1), name, nid, number);
                 rentalSystem.addCustomer(newCustomer);
                 rentalSystem.rentCar(selectedCar, newCustomer, rentalDays);
                 JOptionPane.showMessageDialog(null, "Car rented successfully.");
@@ -318,7 +317,7 @@ class CarRentalSystemGUI {
                 Car car = rental.getCar();
                 Customer customer = rental.getCustomer();
                 rentalDetails.append("Car: ").append(car.getBrand()).append(" ").append(car.getModel())
-                        .append(", Customer: ").append(customer.getName()).append(", NID: ").append(customer.getNid())
+                        .append(", Customer: ").append(customer.getName()).append(", NID: ").append(customer.getNid()).append(", Phone Number: ").append(customer.getNumber())
                         .append(", Days: ").append(rental.getDays())
                         .append(", Total Price: $").append(car.calculatePrice(rental.getDays()))
                         .append("\n");
